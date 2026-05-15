@@ -11,7 +11,7 @@ int ticksPerWeek = 25; // 5 days x 5 price updates
 
 void setup() {
   size(400, 140);
-  frameRate(1); // one draw() call per second so the console isn't spammed
+  exit();
 
   market = new Market(1, 0);
   market.addStock(new Stock("APXL", "Apex Technologies",  142.50, new float[]{ 128, 131, 135, 133, 138, 140, 142 }));
@@ -23,23 +23,6 @@ void setup() {
   println("║    iQINVEST – Stock Market Simulator     ║");
   println("╚══════════════════════════════════════════╝");
   printAllPrices();
-}
-
-
-void draw() {
-  // Every second: simulate one week automatically
-  simulateWeek();
-
-  // Simple canvas
-  background(15, 20, 30);
-  fill(0, 200, 140);
-  textAlign(CENTER, CENTER);
-  textSize(14);
-  text("iQINVEST", width / 2, 40);
-  fill(120, 140, 180);
-  textSize(11);
-  text("Week " + week + "  |  see console for updates", width / 2, 68);
-  text("Risk: " + market.getRiskLevel() + " – " + market.getMarketConditionLabel(), width / 2, 88);
 }
 
 
