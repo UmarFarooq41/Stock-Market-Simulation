@@ -1,181 +1,97 @@
+// Stock Class 
 class Stock {
 
-  //Fields
-  
-  // naming fields
-  String ticker;          // e.g. "AAPL"
-  String companyName;     // e.g. "Apple Inc."
+  String ticker;
+  String companyName;
 
-  // price fields
-  float currentPrice;           // Most recent price
-  float initialPrice;           // Price at time of first purchase
-  ArrayList<Float> priceHistory; // Full history of prices (used for graph)
+  float currentPrice;
+  float initialPrice;
+  ArrayList<Float> priceHistory;
 
-  // ownership
-  int sharesOwned;          // Number of shares currently held
-  float totalAmountInvested; // Total dollars spent buying shares
+  int   sharesOwned;
+  float totalAmountInvested;
 
-  // Risk level 0–5 supplied by the Market; stored here for convenience
   int riskLevel;
+  final float[] VOLATILITY = { 0.005, 0.01, 0.02, 0.04, 0.07, 0.12 };
 
-  // Volatility multipliers indexed by risk level (0 = very stable, 5 = wild)
-  final float[] voltatility = {0.005, 0.01, 0.02, 0.04, 0.07, 0.12};
-
-  // Transaction history
-  ArrayList<String> transactionHistory; // Human-readable log of buys/sells
+  ArrayList<String> transactionHistory;
 
 
-  // Constructor
-
-  Stock(String ticker, String companyName, float startingPrice, ArrayList<Float> history) {
-    this.ticker      = ticker;
-    this.companyName = companyName;
+  Stock(String ticker, String companyName, float startingPrice, float[] seedHistory) {
+    this.ticker       = ticker;
+    this.companyName  = companyName;
     this.currentPrice = startingPrice;
     this.initialPrice = startingPrice;
 
-    this.priceHistory = new ArrayList<Float>(history);
-    this.priceHistory.add(startingPrice); // make sure the current price is included
+    priceHistory = new ArrayList<Float>();
+    for (float p : seedHistory) priceHistory.add(p);
+    priceHistory.add(startingPrice);
 
-    this.sharesOwned         = 0;
-    this.totalAmountInvested = 0.0;
-    this.riskLevel           = 0;
-
-    this.transactionHistory = new ArrayList<String>();
+    sharesOwned         = 0;
+    totalAmountInvested = 0.0;
+    riskLevel           = 0;
+    transactionHistory  = new ArrayList<String>();
   }
 
 
-  // Methods
-
-  // Price Simulation
- 
-
-  //Advances the stock price by one simulated time step. Uses a simple random-walk model scaled by the current risk level. 
-  // The new price is appended to priceHistory.
-
+  // Advance price by one simulation step
   void updatePrice() {
-    float volatility  = voltatility[constrain(riskLevel, 0, 5)];
-
-    // Random percentage change centred around 0, scaled by volatility
-    float pctChange   = (random(-1, 1) * volatility);
-
-    // Small positive drift so long-held stocks can grow
-    float drift       = 0.001 * (1.0 / (riskLevel + 1));
-
-    currentPrice = max(0.01, currentPrice * (1 + pctChange + drift));
+    float vol       = VOLATILITY[constrain(riskLevel, 0, 5)];
+    float pctChange = random(-1, 1) * vol;
+    float drift     = 0.001 * (1.0 / (riskLevel + 1));
+    currentPrice    = max(0.01, currentPrice * (1 + pctChange + drift));
     priceHistory.add(currentPrice);
   }
-
-  //Sets the market risk level used when simulating price changes.
 
   void setRiskLevel(int level) {
     riskLevel = constrain(level, 0, 5);
   }
 
-  // Buy / Sell
 
-  // Buys a given number of shares at the current price. Records the transaction and adjusts ownership/investment totals.
-
+  // Returns false if shares <= 0
   boolean buyShares(int shares) {
     if (shares <= 0) return false;
-
     float cost = shares * currentPrice;
-    sharesOwned          += shares;
-    totalAmountInvested  += cost;
-
-    // Set initialPrice on first-ever buy
-    if (sharesOwned == shares) {
-      initialPrice = currentPrice;
-    }
-
-    transactionHistory.add(
-      "BUY  " + shares + " share(s) of " + ticker +
-      " @ $" + nf(currentPrice, 1, 2) +
-      "Total cost: $" + nf(cost, 1, 2)
-    );
+    if (sharesOwned == 0) initialPrice = currentPrice;
+    sharesOwned         += shares;
+    totalAmountInvested += cost;
+    transactionHistory.add("BUY  " + shares + " @ $" + nf(currentPrice, 1, 2) + "  cost $" + nf(cost, 1, 2));
     return true;
   }
 
-  // Sells a given number of shares at the current price. Records the transaction and adjusts ownership totals.
-   
+  // Returns false if shares <= 0 or more than owned
   boolean sellShares(int shares) {
     if (shares <= 0 || shares > sharesOwned) return false;
-
     float revenue = shares * currentPrice;
-
-    // Reduce invested amount proportionally
-    if (sharesOwned > 0) {
-      totalAmountInvested *= (float)(sharesOwned - shares) / sharesOwned;
-    }
-    sharesOwned -= shares;
-
-    transactionHistory.add(
-      "SELL " + shares + " share(s) of " + ticker +
-      " @ $" + nf(currentPrice, 1, 2) +
-      "Revenue: $" + nf(revenue, 1, 2)
-    );
+    totalAmountInvested *= (float)(sharesOwned - shares) / sharesOwned;
+    sharesOwned         -= shares;
+    transactionHistory.add("SELL " + shares + " @ $" + nf(currentPrice, 1, 2) + "  revenue $" + nf(revenue, 1, 2));
     return true;
   }
 
-  // Statistics / Portfolio Helpers
 
-  //Returns the current market value of all owned shares.
+  float getCurrentValue()       { return sharesOwned * currentPrice; }
+  float getProfitLoss()         { return getCurrentValue() - totalAmountInvested; }
+  float getProfitLossPercent()  { return totalAmountInvested == 0 ? 0 : (getProfitLoss() / totalAmountInvested) * 100.0; }
+  float getPriceChange()        { return currentPrice - initialPrice; }
+  float getPriceChangePercent() { return initialPrice == 0 ? 0 : ((currentPrice - initialPrice) / initialPrice) * 100.0; }
 
-  float getCurrentValue() {
-    return sharesOwned * currentPrice;
-  }
+  ArrayList<Float>  getPriceHistory()       { return priceHistory; }
+  ArrayList<String> getTransactionHistory() { return new ArrayList<String>(transactionHistory); }
 
-  //Returns the raw dollar profit or loss on this stock.
-
-  float getProfitLoss() {
-    return getCurrentValue() - totalAmountInvested;
-  }
-
-  //Returns profit/loss as a percentage of the amount invested.
-
-  float getProfitLossPercent() {
-    if (totalAmountInvested == 0) return 0.0;
-    return (getProfitLoss() / totalAmountInvested) * 100.0;
-  }
-
-  //Returns the dollar change in the stock price since the initial purchase.
-  
-  float getPriceChange() {
-    return currentPrice - initialPrice;
-  }
-
-  //Returns the percentage change in price since the initial purchase.
-   
-  float getPriceChangePercent() {
-    if (initialPrice == 0) return 0.0;
-    return ((currentPrice - initialPrice) / initialPrice) * 100.0;
-  }
-
-  //Returns the full ArrayList of historical prices
-  
-  ArrayList<Float> getPriceHistory() {
-    return priceHistory;
-  }
-
-  //Returns a copy of the transaction history log.
-   
-  ArrayList<String> getTransactionHistory() {
-    return new ArrayList<String>(transactionHistory);
-  }
-
-  // Display / Debug
 
   void printStatus() {
-    println("──────────────────────────────────");
-    println("  " + companyName + " (" + ticker + ")");
-    println("  Current Price : $" + nf(currentPrice, 1, 2));
-    println("  Shares Owned  : " + sharesOwned);
-    println("  Market Value  : $" + nf(getCurrentValue(), 1, 2));
-    println("  Invested      : $" + nf(totalAmountInvested, 1, 2));
-    println("  P/L           : $" + nf(getProfitLoss(), 1, 2) +
-            "  (" + nf(getProfitLossPercent(), 1, 2) + "%)");
-    println("  Price Change  : $" + nf(getPriceChange(), 1, 2) +
-            "  (" + nf(getPriceChangePercent(), 1, 2) + "%)");
-    println("  Risk Level    : " + riskLevel);
-    println("──────────────────────────────────");
+    String pl     = (getProfitLoss() >= 0 ? "+" : "")            + nf(getProfitLoss(), 1, 2);
+    String plPct  = (getProfitLossPercent() >= 0 ? "+" : "")     + nf(getProfitLossPercent(), 1, 2) + "%";
+    String chg    = (getPriceChange() >= 0 ? "+" : "")           + nf(getPriceChange(), 1, 2);
+    String chgPct = (getPriceChangePercent() >= 0 ? "+" : "")    + nf(getPriceChangePercent(), 1, 2) + "%";
+    println("  ┌──────────────────────────────────────────┐");
+    println("  │  " + companyName + " (" + ticker + ")");
+    println("  │  Price    : $" + nf(currentPrice, 1, 2) + "  (" + chg + " / " + chgPct + ")");
+    println("  │  Shares   : " + sharesOwned);
+    println("  │  Value    : $" + nf(getCurrentValue(), 1, 2));
+    println("  │  Invested : $" + nf(totalAmountInvested, 1, 2));
+    println("  │  P/L      : $" + pl + "  (" + plPct + ")");
+    println("  └──────────────────────────────────────────┘");
   }
 }
