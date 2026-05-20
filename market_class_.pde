@@ -1,7 +1,6 @@
 // Market class
 // This manages all the stocks in the simulation. It controls the risk level,
 // keeps track of which stock the user is looking at, and runs the price ticks.
-// Author: Abdelrahman Mohamed
 
 class Market {
 
