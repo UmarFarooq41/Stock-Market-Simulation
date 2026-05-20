@@ -10,6 +10,89 @@ int DISPLAYED_STOCK = 0;
 Market market;
 int day = 0;
 
+//////// Vaani main tab, integrate with previous main program: ///////////
+
+// Need G4P library
+import g4p_controls.*;
+
+userStockPortfolio myPortfolio;
+
+Stock appleStock;
+Stock costcoStock;
+Stock nvidiaStock;
+Stock walmartStock;
+
+// user hasn't selected any company yet
+boolean appleSelected = false;
+boolean costcoSelected = false;
+boolean nvidiaSelected = false;
+boolean walmartSelected = false;
+
+int sharesToBuy = 0; // initially user hasn't inputed their first initial investment value or sale value
+int sharesToSell = 0;
+
+//// for debugging
+//boolean buyClicked = false;
+//boolean sellClicked = false;
+
+void setup(){
+  size(1500, 900);
+  createGUI();
+  //customGUI();
+ 
+  //name will update as user enters it through gui
+  myPortfolio = new userStockPortfolio("");
+
+  appleStock = new Stock("AAPL", "Apple", 180.0, new ArrayList<Float>());
+  costcoStock = new Stock("COST", "Costco", 570.0, new ArrayList<Float>());
+  nvidiaStock = new Stock("NVDA", "Nvidia", 800.0, new ArrayList<Float>());
+  walmartStock = new Stock("WMT", "Walmart", 60.0, new ArrayList<Float>());
+ 
+  // making sure that only window 1 starts and not everyother one
+  window2.setVisible(false);
+  window3.setVisible(false);
+ 
+}
+
+void draw(){
+  background(230);
+ 
+  myPortfolio.myHoldings.clear();
+ 
+  if (appleSelected) { myPortfolio.addStock(appleStock); }
+  if (costcoSelected) { myPortfolio.addStock(costcoStock); }
+  if (nvidiaSelected) { myPortfolio.addStock(nvidiaStock); }
+  if (walmartSelected) { myPortfolio.addStock(walmartStock); }
+ 
+  stroke(150);
+  line(700,0,700,1000); // dividing the user portfolio from the stock graph
+ 
+  //title for portfolio
+  textSize(15);
+  fill(0);
+ 
+  if (myPortfolio.userName.equals("")){
+   
+    text("ENTER YOUR NAME TO GET STARTED!", 720,40);
+  }
+ 
+  else{
+    text(myPortfolio.userName + "'s STOCK PORTFOLIO", 720,40);
+}
+ 
+  myPortfolio.showPortfolio(720,80);
+ 
+  stroke(150);
+  line(700,220,1000,220);
+ 
+  myPortfolio.showEachStock(720,260);
+ 
+}
+
+///////////////////////////////////////////////////////////////////////
+
+
+
 // these define where the graph sits on the screen
 int gX = 70;  // left edge
 int gY = 80;  // top edge
