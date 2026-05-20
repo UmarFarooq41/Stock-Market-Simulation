@@ -1,23 +1,27 @@
-// Market Class 
+// Market class
+// This manages all the stocks in the simulation. It controls the risk level,
+// keeps track of which stock the user is looking at, and runs the price ticks.
+// Author: Abdelrahman Mohamed
+
 class Market {
 
   ArrayList<Stock> stocks;
-  Stock activeStock;
+  Stock activeStock; // the stock the user currently has selected
 
   int riskLevel;
   final String[] CONDITION_LABELS = { "Stable", "Calm", "Moderate", "Volatile", "Turbulent", "Extreme Volatility" };
 
-  int  tickIntervalMs;
-  int  lastTickTime;
+  int tickIntervalMs;
+  int lastTickTime;
   boolean running;
 
 
   Market(int initialRiskLevel, int tickIntervalMs) {
-    stocks              = new ArrayList<Stock>();
-    activeStock         = null;
+    stocks = new ArrayList<Stock>();
+    activeStock = null;
     this.tickIntervalMs = tickIntervalMs;
-    lastTickTime        = 0;
-    running             = false;
+    lastTickTime = 0;
+    running = false;
     setRiskLevel(initialRiskLevel);
   }
 
@@ -55,29 +59,29 @@ class Market {
   Stock getActiveStock() { return activeStock; }
 
 
-  // Propagates new risk level to every stock
+  // update risk level on every stock when the user changes it
   void setRiskLevel(int level) {
     riskLevel = constrain(level, 0, 5);
     for (Stock s : stocks) s.setRiskLevel(riskLevel);
   }
 
-  int    getRiskLevel()            { return riskLevel; }
+  int getRiskLevel() { return riskLevel; }
   String getMarketConditionLabel() { return CONDITION_LABELS[riskLevel]; }
 
 
-  void startSimulation()  { running = true;  lastTickTime = millis(); }
-  void pauseSimulation()  { running = false; }
-  void resumeSimulation() { running = true;  lastTickTime = millis(); }
-  boolean isRunning()     { return running; }
+  void startSimulation() { running = true; lastTickTime = millis(); }
+  void pauseSimulation() { running = false; }
+  void resumeSimulation() { running = true; lastTickTime = millis(); }
+  boolean isRunning() { return running; }
 
-  // Call every draw() loop — fires a tick when the interval has elapsed
+  // call this every draw() loop, it fires a tick when enough time has passed
   void update() {
     if (!running) return;
     int now = millis();
     if (now - lastTickTime >= tickIntervalMs) { tick(); lastTickTime = now; }
   }
 
-  // Advances every stock's price by one step
+  // move every stock's price forward by one step
   void tick() {
     for (Stock s : stocks) s.updatePrice();
   }
@@ -85,35 +89,29 @@ class Market {
   void setTickInterval(int ms) { if (ms > 0) tickIntervalMs = ms; }
 
 
-  boolean buyActiveStock(int shares)  { return activeStock != null && activeStock.buyShares(shares); }
+  boolean buyActiveStock(int shares) { return activeStock != null && activeStock.buyShares(shares); }
   boolean sellActiveStock(int shares) { return activeStock != null && activeStock.sellShares(shares); }
 
 
-  float getTotalPortfolioValue() { float t = 0; for (Stock s : stocks) t += s.getCurrentValue();       return t; }
-  float getTotalAmountInvested() { float t = 0; for (Stock s : stocks) t += s.totalAmountInvested;     return t; }
-  float getTotalProfitLoss()     { return getTotalPortfolioValue() - getTotalAmountInvested(); }
+  float getTotalPortfolioValue() { float t = 0; for (Stock s : stocks) t += s.getCurrentValue(); return t; }
+  float getTotalAmountInvested() { float t = 0; for (Stock s : stocks) t += s.totalAmountInvested; return t; }
+  float getTotalProfitLoss() { return getTotalPortfolioValue() - getTotalAmountInvested(); }
 
 
   void printMarketStatus() {
-    println("╔══════════════════════════════════════════╗");
-    println("║            MARKET STATUS                 ║");
-    println("╚══════════════════════════════════════════╝");
-    println("  Risk   : " + riskLevel + " – " + getMarketConditionLabel());
-    println("  Status : " + (running ? "RUNNING" : "PAUSED"));
-    println("  Active : " + (activeStock != null ? activeStock.ticker : "none"));
-    println("  Total Value : $" + nf(getTotalPortfolioValue(), 1, 2));
-    println("  Total P/L   : $" + nf(getTotalProfitLoss(), 1, 2));
+    println("MARKET STATUS");
+    println("Risk: " + riskLevel + " - " + getMarketConditionLabel());
+    println("Status: " + (running ? "RUNNING" : "PAUSED"));
+    println("Active: " + (activeStock != null ? activeStock.ticker : "none"));
+    println("Total Value: $" + nf(getTotalPortfolioValue(), 1, 2));
+    println("Total P/L: $" + nf(getTotalProfitLoss(), 1, 2));
     for (Stock s : stocks) s.printStatus();
   }
 
   void printAllPrices() {
-    println("── Prices ───────────────────────────────────");
     for (Stock s : stocks) {
-      String arrow = s.currentPrice >= s.initialPrice ? "▲" : "▼";
-      println("  " + s.ticker + "  $" + nf(s.currentPrice, 1, 2) +
-              "  " + arrow + " " + nf(abs(s.getPriceChangePercent()), 1, 2) + "%" +
-              "  [owned: " + s.sharesOwned + "]");
+      String arrow = s.currentPrice >= s.initialPrice ? "up" : "down";
+      println(s.ticker + "  $" + nf(s.currentPrice, 1, 2) + "  " + arrow + "  owned: " + s.sharesOwned);
     }
-    println("─────────────────────────────────────────────");
   }
 }
