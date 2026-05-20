@@ -2,7 +2,6 @@
 // This handles everything related to a single company's stock.
 // It tracks the price over time, lets you buy and sell shares,
 // and calculates things like profit/loss.
-// Author: Umar Farooq
 
 class Stock {
 
