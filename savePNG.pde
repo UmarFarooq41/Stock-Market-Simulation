@@ -1,12 +1,1 @@
-class savePNG{
-
-  // Fields
-  
-  
-  // Constructor
-  
-  
-  // Methods
-  
-
-}
+//don't need
