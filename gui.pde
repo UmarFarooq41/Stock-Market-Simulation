@@ -14,49 +14,103 @@
  * =========================================================
  */
 
-synchronized public void win_draw1(PApplet appc, GWinData data) { //_CODE_:window1:258457:
+synchronized public void win_draw1(PApplet appc, GWinData data) { //_CODE_:window1:462335:
   appc.background(230);
-} //_CODE_:window1:258457:
+} //_CODE_:window1:462335:
 
-public void checkbox1_clicked1(GCheckbox source, GEvent event) { //_CODE_:checkbox1:536065:
-  println("checkbox1 - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:checkbox1:536065:
+public void startButtonClicked(GButton source, GEvent event) { //_CODE_:startButton:336830:
+  //println("button1 - GButton >> GEvent." + event + " @ " + millis());
 
-public void checkbox2_clicked1(GCheckbox source, GEvent event) { //_CODE_:checkbox2:820511:
-  println("checkbox2 - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:checkbox2:820511:
+  window1.setVisible(false); // shuts down window 1
+  window2.setVisible(true); // then takes user to next window
+   
+} //_CODE_:startButton:336830:
 
-public void checkbox3_clicked1(GCheckbox source, GEvent event) { //_CODE_:checkbox3:816593:
-  println("checkbox3 - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:checkbox3:816593:
-
-public void checkbox4_clicked1(GCheckbox source, GEvent event) { //_CODE_:checkbox4:871456:
-  println("checkbox4 - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:checkbox4:871456:
-
-public void textfield1_change1(GTextField source, GEvent event) { //_CODE_:textfield1:689653:
-  println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:textfield1:689653:
-
-synchronized public void win_draw2(PApplet appc, GWinData data) { //_CODE_:window2:568383:
+synchronized public void win_draw2(PApplet appc, GWinData data) { //_CODE_:window2:768087:
   appc.background(230);
-} //_CODE_:window2:568383:
+} //_CODE_:window2:768087:
 
-public void button1_click1(GButton source, GEvent event) { //_CODE_:button1:316724:
+public void nameFieldClicked(GTextField source, GEvent event) { //_CODE_:nameField:648878:
+  println("nameField - GTextField >> GEvent." + event + " @ " + millis());
+  
+  if (event == GEvent.ENTERED){ myPortfolio.userName = source.getText(); }
+  
+} //_CODE_:nameField:648878:
+
+public void dropDrownClicked(GDropList source, GEvent event) { //_CODE_:dropDownMenu:250829:
+  println("dropDownMenu - GDropList >> GEvent." + event + " @ " + millis());
+  
+  appleSelected = false;
+  costcoSelected = false;
+  nvidiaSelected = false;
+  walmartSelected = false;
+  
+  // tells us which company user picked from drop down, index is 0 - 3
+  int compClicked = source.getSelectedIndex();
+  
+  if (compClicked == 0) { 
+    appleSelected = true;
+  }
+  if (compClicked == 1) { 
+    costcoSelected = true;
+  }
+  if (compClicked == 2) { 
+    nvidiaSelected = true;
+  }
+  if (compClicked == 3) { 
+    walmartSelected = true;
+  }
+  
+} //_CODE_:dropDownMenu:250829:
+
+public void numberOfSharesClicked(GTextField source, GEvent event) { //_CODE_:numberOfShares:837025:
+  //println("numberOfShares - GTextField >> GEvent." + event + " @ " + millis);
+  
+  if(event == GEvent.ENTERED){
+    // users chooses a number of shares to either buy or sell 
+     sharesToBuy = int(source.getText());
+     sharesToSell = int(source.getText());
+     
+   }
+  
+} //_CODE_:numberOfShares:837025:
+
+public void buyButtonClicked(GButton source, GEvent event) { //_CODE_:buyButton:762415:
+  println("buyButton - GButton >> GEvent." + event + " @ " + millis());
+  
+  if (appleSelected) { appleStock.buyShares(sharesToBuy); }
+  if (costcoSelected) { costcoStock.buyShares(sharesToBuy); }
+  if (nvidiaSelected) { nvidiaStock.buyShares(sharesToBuy); }
+  if (walmartSelected) { walmartStock.buyShares(sharesToBuy); }
+    
+} //_CODE_:buyButton:762415:
+
+public void saleButtonClicked(GButton source, GEvent event) { //_CODE_:salelButton:725851:
   println("button1 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:button1:316724:
+  
+  if (appleSelected) { appleStock.sellShares(sharesToSell); }
+  if (costcoSelected) { costcoStock.sellShares(sharesToSell); }
+  if (nvidiaSelected) { nvidiaStock.sellShares(sharesToSell); }
+  if (walmartSelected) { walmartStock.sellShares(sharesToSell); }
+  
+} //_CODE_:salelButton:725851:
 
-public void button2_click1(GButton source, GEvent event) { //_CODE_:button2:330520:
-  println("button2 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:button2:330520:
+public void screenShotButtonClicked(GButton source, GEvent event) { //_CODE_:screenShotButton:516708:
+  println("screenShotButton - GButton >> GEvent." + event + " @ " + millis());
+  
+  saveFrame("IQInvest_ScreenShot_####.png");
+  println("ScreenShot saved");
 
-public void textfield2_change1(GTextField source, GEvent event) { //_CODE_:textfield2:395517:
-  println("textfield2 - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:textfield2:395517:
+  
+} //_CODE_:screenShotButton:516708:
 
-public void button3_click1(GButton source, GEvent event) { //_CODE_:button3:482335:
-  println("button3 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:button3:482335:
+public void backButtonClicked(GButton source, GEvent event) { //_CODE_:backButton:693047:
+  println("backButton - GButton >> GEvent." + event + " @ " + millis());
+  
+  window2.setVisible(false);
+  window1.setVisible(true); 
+  
+} //_CODE_:backButton:693047:
 
 
 
@@ -67,82 +121,66 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setMouseOverEnabled(false);
   surface.setTitle("Sketch Window");
-  window1 = GWindow.getWindow(this, "Window title", 0, 0, 500, 500, JAVA2D);
+  window1 = GWindow.getWindow(this, "Window title", 0, 0, 500, 300, JAVA2D);
   window1.noLoop();
   window1.setActionOnClose(G4P.KEEP_OPEN);
   window1.addDrawHandler(this, "win_draw1");
-  checkbox1 = new GCheckbox(window1, -6, 218, 195, 42);
-  checkbox1.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  checkbox1.setText("checkbox text");
-  checkbox1.setOpaque(false);
-  checkbox1.addEventHandler(this, "checkbox1_clicked1");
-  checkbox2 = new GCheckbox(window1, 242, 216, 225, 41);
-  checkbox2.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  checkbox2.setText("checkbox text");
-  checkbox2.setOpaque(false);
-  checkbox2.addEventHandler(this, "checkbox2_clicked1");
-  checkbox3 = new GCheckbox(window1, 246, 345, 229, 41);
-  checkbox3.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  checkbox3.setText("checkbox text");
-  checkbox3.setOpaque(false);
-  checkbox3.addEventHandler(this, "checkbox3_clicked1");
-  checkbox4 = new GCheckbox(window1, 5, 345, 190, 40);
-  checkbox4.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  checkbox4.setText("checkbox text");
-  checkbox4.setOpaque(false);
-  checkbox4.addEventHandler(this, "checkbox4_clicked1");
-  label1 = new GLabel(window1, -6, 307, 80, 20);
-  label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label1.setText("Nvidia");
-  label1.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
-  label1.setOpaque(false);
-  label2 = new GLabel(window1, 251, 307, 80, 22);
-  label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label2.setText("Walmart");
-  label2.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
-  label2.setOpaque(false);
-  label3 = new GLabel(window1, -7, 184, 80, 20);
-  label3.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label3.setText("Costco");
-  label3.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
-  label3.setOpaque(false);
-  label4 = new GLabel(window1, 241, 184, 80, 20);
-  label4.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label4.setText("Apple");
-  label4.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  label4.setOpaque(false);
-  label5 = new GLabel(window1, -4, 14, 132, 58);
-  label5.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label5.setText("Your Name");
-  label5.setLocalColorScheme(GCScheme.RED_SCHEME);
-  label5.setOpaque(false);
-  textfield1 = new GTextField(window1, 162, 16, 174, 55, G4P.SCROLLBARS_NONE);
-  textfield1.setOpaque(true);
-  textfield1.addEventHandler(this, "textfield1_change1");
-  label6 = new GLabel(window1, 1, 123, 339, 26);
-  label6.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label6.setText("What companies would you like to invest in");
-  label6.setOpaque(false);
+  startButton = new GButton(window1, 117, 166, 193, 76);
+  startButton.setText("Start Investing Now");
+  startButton.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  startButton.addEventHandler(this, "startButtonClicked");
+  welcomeLabel = new GLabel(window1, 68, 36, 300, 117);
+  welcomeLabel.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  welcomeLabel.setText("WELCOME TO IQINVEST");
+  welcomeLabel.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  welcomeLabel.setOpaque(false);
   window2 = GWindow.getWindow(this, "Window title", 0, 0, 500, 500, JAVA2D);
   window2.noLoop();
   window2.setActionOnClose(G4P.KEEP_OPEN);
   window2.addDrawHandler(this, "win_draw2");
-  button1 = new GButton(window2, 320, 228, 267, 67);
-  button1.setText("Sell Shares");
-  button1.addEventHandler(this, "button1_click1");
-  button2 = new GButton(window2, 6, 230, 240, 66);
-  button2.setText("Buy Shares");
-  button2.addEventHandler(this, "button2_click1");
-  textfield2 = new GTextField(window2, 19, 87, 241, 59, G4P.SCROLLBARS_NONE);
-  textfield2.setOpaque(true);
-  textfield2.addEventHandler(this, "textfield2_change1");
-  label7 = new GLabel(window2, 7, 52, 197, 26);
-  label7.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label7.setText("How much would you like to invest");
-  label7.setOpaque(false);
-  button3 = new GButton(window2, 7, 350, 239, 65);
-  button3.setText("Take A ScreenShot");
-  button3.addEventHandler(this, "button3_click1");
+  nameLabel = new GLabel(window2, 9, 5, 153, 95);
+  nameLabel.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  nameLabel.setText("Enter Your Name                                   Please press enter to save");
+  nameLabel.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  nameLabel.setOpaque(false);
+  nameField = new GTextField(window2, 190, 22, 219, 63, G4P.SCROLLBARS_NONE);
+  nameField.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  nameField.setOpaque(true);
+  nameField.addEventHandler(this, "nameFieldClicked");
+  dropDownMenu = new GDropList(window2, 35, 210, 90, 100, 4, 10);
+  dropDownMenu.setItems(loadStrings("list_250829"), 0);
+  dropDownMenu.addEventHandler(this, "dropDrownClicked");
+  numberOfShares = new GTextField(window2, 296, 143, 131, 60, G4P.SCROLLBARS_NONE);
+  numberOfShares.setText("Number of shares");
+  numberOfShares.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  numberOfShares.setOpaque(true);
+  numberOfShares.addEventHandler(this, "numberOfSharesClicked");
+  sharesLabel = new GLabel(window2, 178, 112, 104, 95);
+  sharesLabel.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  sharesLabel.setText("How many shares do you want");
+  sharesLabel.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  sharesLabel.setOpaque(false);
+  buyButton = new GButton(window2, 299, 244, 98, 57);
+  buyButton.setText("Buy");
+  buyButton.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  buyButton.addEventHandler(this, "buyButtonClicked");
+  salelButton = new GButton(window2, 182, 244, 95, 59);
+  salelButton.setText("Sell");
+  salelButton.setLocalColorScheme(GCScheme.RED_SCHEME);
+  salelButton.addEventHandler(this, "saleButtonClicked");
+  chooseCompanyLabel = new GLabel(window2, 28, 126, 97, 65);
+  chooseCompanyLabel.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  chooseCompanyLabel.setText("Choose a company");
+  chooseCompanyLabel.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  chooseCompanyLabel.setOpaque(false);
+  screenShotButton = new GButton(window2, 235, 338, 153, 81);
+  screenShotButton.setText("Take a screenshot");
+  screenShotButton.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
+  screenShotButton.addEventHandler(this, "screenShotButtonClicked");
+  backButton = new GButton(window2, 5, 341, 144, 75);
+  backButton.setText("Back");
+  backButton.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  backButton.addEventHandler(this, "backButtonClicked");
   window1.loop();
   window2.loop();
 }
@@ -150,20 +188,16 @@ public void createGUI(){
 // Variable declarations 
 // autogenerated do not edit
 GWindow window1;
-GCheckbox checkbox1; 
-GCheckbox checkbox2; 
-GCheckbox checkbox3; 
-GCheckbox checkbox4; 
-GLabel label1; 
-GLabel label2; 
-GLabel label3; 
-GLabel label4; 
-GLabel label5; 
-GTextField textfield1; 
-GLabel label6; 
+GButton startButton; 
+GLabel welcomeLabel; 
 GWindow window2;
-GButton button1; 
-GButton button2; 
-GTextField textfield2; 
-GLabel label7; 
-GButton button3; 
+GLabel nameLabel; 
+GTextField nameField; 
+GDropList dropDownMenu; 
+GTextField numberOfShares; 
+GLabel sharesLabel; 
+GButton buyButton; 
+GButton salelButton; 
+GLabel chooseCompanyLabel; 
+GButton screenShotButton; 
+GButton backButton; 
